@@ -3,10 +3,10 @@ using Newtonsoft.Json.Linq;
 
 namespace SysMonitor.NET.Resources;
 
-public abstract class ResourceItemBase<T> where T : struct, IComparable
+public abstract class ResourceItemBase<T>
 {
     [JsonIgnore]
-    public IResourceResult Result { get; protected set; }
+    public IResourceResult? Result { get; protected set; }
     [JsonProperty("name")]
     public string Name { get; protected set; }
     [JsonProperty("max")]
