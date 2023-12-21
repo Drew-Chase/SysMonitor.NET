@@ -1,9 +1,17 @@
-﻿namespace Example;
+﻿using SysMonitor.NET;
+using SysMonitor.NET.Resources;
+
+namespace Example;
 
 internal class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        Console.WriteLine("Hello, World!");
+        ResourceMonitor monitor = ResourceMonitor.Default;
+        monitor.OnUpdate += (sender, data) =>
+        {
+            Console.WriteLine(data.ToString());
+        };
+        monitor.Start();
     }
 }
