@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace SysMonitor.NET;
 
+[Flags]
 public enum EResourceType
 {
-    CPU,
-    RAM,
-    DISK,
-    NETWORK,
+    NONE = 0,
+    CPU = 1,
+    RAM = 2,
+    DISK = 3,
+    NETWORK = 8,
 }
