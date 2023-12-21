@@ -2,7 +2,7 @@
 
 namespace SysMonitor.NET.Resources;
 
-public class CPUResource(string name, double maxValue, double minValue) : ResourceItemBase<double>(name, maxValue, minValue)
+public class CPUResource() : ResourceItemBase<double>("CPU", 1d, 0d)
 {
     public override double GetApplicationUsage()
     {
@@ -44,7 +44,7 @@ public class CPUResource(string name, double maxValue, double minValue) : Resour
         double totalSystemTime = Environment.TickCount64 - startTime;
         double timePerCore = totalProcessTime / Environment.ProcessorCount * totalSystemTime;
         double adjustedTimePerCore = timePerCore * 10;
-        return Math.Min(adjustedTimePerCore, 1);
+        return CurrentValue = Math.Max(Math.Min(adjustedTimePerCore, MaxValue), MinValue);
 
     }
 }
