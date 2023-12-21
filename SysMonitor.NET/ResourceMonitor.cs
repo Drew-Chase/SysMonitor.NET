@@ -11,6 +11,7 @@ public class ResourceMonitor
     public event ResourceMonitorUpdateHandler? OnUpdate;
 
     private CPUResource? CPU = null;
+    private RAMResource? RAM = null;
     private readonly TimeSpan updateFrequency;
     private bool isRunning = false;
     public ResourceMonitor(TimeSpan updateFrequency, EResourceType flag)
@@ -21,7 +22,7 @@ public class ResourceMonitor
             CPU = new();
         if (flag.HasFlag(EResourceType.RAM))
         {
-
+            RAM = new();
         }
         if (flag.HasFlag(EResourceType.DISK))
         {
@@ -41,36 +42,31 @@ public class ResourceMonitor
     {
         isRunning = false;
     }
-    private void Run()
+    private async Task Run()
     {
         while (isRunning)
         {
-
+            Task.WaitAll(CPU?.UpdateAsync() ?? Task.CompletedTask, RAM?.UpdateAsync() ?? Task.CompletedTask);
             OnUpdate?.Invoke(this, GetResult());
-            Thread.Sleep(updateFrequency);
+            await Task.Delay(updateFrequency);
         }
     }
 
-    public ResourceResult GetResult()
+    private ResourceResult GetResult()
     {
         return new()
         {
-            CPU = new()
-            {
-                System = CPU?.GetSystemUsage() ?? 0,
-                Application = CPU?.GetApplicationUsage() ?? 0,
-                Min = CPU?.MinValue ?? 0,
-                Max = CPU?.MaxValue ?? 0
-            }
+            CPU = (CPUResult?)CPU?.Result,
+            RAM = (RAMResult?)RAM?.Result
         };
     }
 
     public JObject ToJson()
     {
-        return JObject.FromObject(GetResult());
+        return GetResult().ToJson();
     }
     public override string ToString()
     {
-        return JsonConvert.SerializeObject(ToJson());
+        return GetResult().ToString();
     }
 }
