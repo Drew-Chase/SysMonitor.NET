@@ -7,8 +7,8 @@ public struct ResourceResult()
 {
     public CPUResult? CPU { get; set; } = null;
     public RAMResult? RAM { get; set; } = null;
-    public DiskResult? Disk { get; set; } = null;
-    public NetworkingResult? Networking { get; set; } = null;
+    public RWData? Disk { get; set; } = null;
+    public RWData? Networking { get; set; } = null;
 
     public readonly JObject ToJson()
     {
@@ -36,19 +36,11 @@ public sealed class RAMResult : IResourceResult
     public ulong Max { get; set; }
 }
 
-public sealed class DiskResult : IResourceResult
+public struct RWData(ulong read, ulong write) : IResourceResult
 {
-    public double System { get; set; }
-    public double Application { get; set; }
-    public double Min { get; set; }
-    public double Max { get; set; }
+    public ulong Read { get; set; } = read;
+    public ulong Write { get; set; } = write;
+
 }
 
-public sealed class NetworkingResult : IResourceResult
-{
-    public double System { get; set; }
-    public double Application { get; set; }
-    public double Min { get; set; }
-    public double Max { get; set; }
-}
 public interface IResourceResult { }
