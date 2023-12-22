@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using SysMonitor.NET.Resources;
 
 namespace SysMonitor.NET;
@@ -7,7 +6,9 @@ namespace SysMonitor.NET;
 public class ResourceMonitor
 {
     public static ResourceMonitor Default { get; } = new(TimeSpan.FromSeconds(1), EResourceType.CPU | EResourceType.RAM | EResourceType.DISK | EResourceType.NETWORK);
+
     public delegate void ResourceMonitorUpdateHandler(ResourceMonitor sender, ResourceResult data);
+
     public event ResourceMonitorUpdateHandler? OnUpdate;
 
     private readonly CPUResource? CPU = null;
@@ -16,6 +17,7 @@ public class ResourceMonitor
     private readonly DiskResource? DISK = null;
     private readonly TimeSpan updateFrequency;
     private bool isRunning = false;
+
     public ResourceMonitor(TimeSpan updateFrequency, EResourceType flag)
     {
         this.updateFrequency = updateFrequency;
@@ -37,17 +39,17 @@ public class ResourceMonitor
         }
     }
 
-
-
     public void Start()
     {
         isRunning = true;
         Run();
     }
+
     public void Stop()
     {
         isRunning = false;
     }
+
     private async Task Run()
     {
         while (isRunning)
@@ -73,6 +75,7 @@ public class ResourceMonitor
     {
         return GetResult().ToJson();
     }
+
     public override string ToString()
     {
         return GetResult().ToString();
