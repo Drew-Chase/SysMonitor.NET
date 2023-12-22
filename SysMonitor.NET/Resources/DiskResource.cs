@@ -57,16 +57,8 @@ public class DiskResource : ResourceItemBase<RWData>
                     content += data.Data;
                 }
             };
-            process.ErrorDataReceived += (sender, data) =>
-            {
-                if (!string.IsNullOrWhiteSpace(data.Data))
-                {
-                    content += data.Data;
-                }
-            };
             process.Start();
             process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
             process.WaitForExit();
             JObject json = JObject.Parse(content);
             long reads = 0;
