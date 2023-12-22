@@ -57,6 +57,13 @@ public class DiskResource : ResourceItemBase<RWData>
                     content += data.Data;
                 }
             };
+            process.ErrorDataReceived += (sender, data) =>
+            {
+                if (!string.IsNullOrWhiteSpace(data.Data))
+                {
+                    content += data.Data;
+                }
+            };
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
@@ -76,7 +83,7 @@ public class DiskResource : ResourceItemBase<RWData>
                             {
                                 foreach (JObject disk in disks.Cast<JObject>())
                                 {
-                                    if (disk?["name"]?.ToString().Equals(driveLetter) ?? false)
+                                    //if (disk?["name"]?.ToString().Equals(driveLetter) ?? false)
                                     {
                                         reads += (long)(disk?["rkB/s"]?.ToObject<double>() ?? 0) * 1024;
                                         writes += (long)(disk?["wkB/s"]?.ToObject<double>() ?? 0) * 1024;
@@ -87,6 +94,7 @@ public class DiskResource : ResourceItemBase<RWData>
                     }
                 }
             }
+            data = new((ulong)reads, (ulong)writes);
         }
         else if (OperatingSystem.IsMacOS())
         {
