@@ -5,7 +5,8 @@ namespace SysMonitor.NET.Resources;
 
 internal class RAMResource : ResourceItemBase<ulong>
 {
-    readonly IHardwareInfo hardwareInfo = new HardwareInfo();
+    private readonly IHardwareInfo hardwareInfo = new HardwareInfo();
+
     public RAMResource() : base("RAM", 0, 0)
     {
         hardwareInfo.RefreshMemoryList();
