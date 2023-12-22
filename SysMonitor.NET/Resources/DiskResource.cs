@@ -5,8 +5,9 @@ namespace SysMonitor.NET.Resources;
 
 public class DiskResource : ResourceItemBase<RWData>
 {
-    PerformanceCounter readCounter;
-    PerformanceCounter writeCounter;
+    private PerformanceCounter readCounter;
+    private PerformanceCounter writeCounter;
+
     public DiskResource() : base("Disk", new(ulong.MaxValue, ulong.MaxValue), new(0, 0))
     {
         if (OperatingSystem.IsWindows())
