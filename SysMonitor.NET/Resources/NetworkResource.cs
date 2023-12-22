@@ -1,16 +1,13 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Runtime.Versioning;
-using System.Text.RegularExpressions;
 
 namespace SysMonitor.NET.Resources;
 
 public class NetworkResource : ResourceItemBase<RWData>
 {
-    PerformanceCounter[] sent;
-    PerformanceCounter[] received;
+    private PerformanceCounter[] sent;
+    private PerformanceCounter[] received;
+
     public NetworkResource() : base("Networking", new(ulong.MaxValue, ulong.MaxValue), new(0, 0))
     {
         if (OperatingSystem.IsWindows())
@@ -92,5 +89,4 @@ public class NetworkResource : ResourceItemBase<RWData>
         }
         return (RWData)(Result = data);
     }
-
 }
