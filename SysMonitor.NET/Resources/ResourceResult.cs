@@ -20,6 +20,7 @@ public struct ResourceResult()
         return JsonConvert.SerializeObject(this);
     }
 }
+
 public sealed class CPUResult : IResourceResult
 {
     public double System { get; set; }
@@ -40,7 +41,7 @@ public struct RWData(ulong read, ulong write) : IResourceResult
 {
     public ulong Read { get; set; } = read;
     public ulong Write { get; set; } = write;
-
 }
 
-public interface IResourceResult { }
+public interface IResourceResult
+{ }
