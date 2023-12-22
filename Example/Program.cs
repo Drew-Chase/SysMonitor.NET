@@ -1,13 +1,11 @@
 ﻿using Chase.CommonLib.Math;
-using Hardware.Info;
 using SysMonitor.NET;
-using System.Diagnostics;
 
 namespace Example;
 
 internal class Program
 {
-    static void Main()
+    private static void Main()
     {
         ResourceMonitor monitor = ResourceMonitor.Default;
         monitor.OnUpdate += (sender, data) =>
@@ -44,6 +42,5 @@ internal class Program
         monitor.Stop();
 
         return;
-
     }
 }
