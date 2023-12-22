@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SysMonitor.NET;
+﻿namespace SysMonitor.NET;
 
 [Flags]
 public enum EResourceType
 {
-    NONE = 0,
-    CPU = 1,
-    RAM = 2,
-    DISK = 3,
-    NETWORK = 8,
+    CPU =  0b_00010,
+    RAM =  0b_00100,
+    DISK = 0b_01000,
+    NETWORK = 0b_10000,
 }
