@@ -12,32 +12,33 @@ public class ResourceMonitor
 
     private readonly CPUResource? CPU = null;
     private readonly RAMResource? RAM = null;
+    private readonly NetworkResource? NETWORKING = null;
     private readonly DiskResource? DISK = null;
     private readonly TimeSpan updateFrequency;
     private bool isRunning = false;
     public ResourceMonitor(TimeSpan updateFrequency, EResourceType flag)
     {
         this.updateFrequency = updateFrequency;
-        if (flag != EResourceType.NONE)
+        if (flag.HasFlag(EResourceType.CPU))
         {
-            if (flag.HasFlag(EResourceType.CPU))
-            {
-                CPU = new();
-            }
-            if (flag.HasFlag(EResourceType.RAM))
-            {
-                RAM = new();
-            }
-            if (flag.HasFlag(EResourceType.DISK))
-            {
-                DISK = new();
-            }
-            if (flag.HasFlag(EResourceType.NETWORK))
-            {
-                Console.WriteLine("hi");
-            }
+            CPU = new();
+        }
+        if (flag.HasFlag(EResourceType.RAM))
+        {
+            RAM = new();
+        }
+        if (flag.HasFlag(EResourceType.DISK))
+        {
+            DISK = new();
+        }
+        if (flag.HasFlag(EResourceType.NETWORK))
+        {
+            NETWORKING = new();
         }
     }
+
+
+
     public void Start()
     {
         isRunning = true;
@@ -51,7 +52,7 @@ public class ResourceMonitor
     {
         while (isRunning)
         {
-            Task.WaitAll(CPU?.UpdateAsync() ?? Task.CompletedTask, RAM?.UpdateAsync() ?? Task.CompletedTask, DISK?.UpdateAsync() ?? Task.CompletedTask);
+            Task.WaitAll(CPU?.UpdateAsync() ?? Task.CompletedTask, RAM?.UpdateAsync() ?? Task.CompletedTask, DISK?.UpdateAsync() ?? Task.CompletedTask, NETWORKING?.UpdateAsync() ?? Task.CompletedTask);
             OnUpdate?.Invoke(this, GetResult());
             await Task.Delay(updateFrequency);
         }
@@ -64,6 +65,7 @@ public class ResourceMonitor
             CPU = (CPUResult?)CPU?.Result,
             RAM = (RAMResult?)RAM?.Result,
             Disk = (RWData?)DISK?.Result,
+            Networking = (RWData?)NETWORKING?.Result,
         };
     }
 
