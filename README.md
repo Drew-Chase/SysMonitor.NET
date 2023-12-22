@@ -90,14 +90,59 @@ Make sure you have the following prerequisites before using SysMonitor.NET:
 
 7. Add any additional logic as needed for your application.
 
+## Resource Data Options
+
+The SysMonitor.NET library provides the following data options to monitor various system resources:
+
+### 1. `ResourceResult` Structure
+
+The `ResourceResult` structure aggregates the results of CPU, RAM, Disk, and Networking monitoring. It includes the following properties:
+
+- `CPU`: A nullable property of type `CPUResult` that contains CPU utilization information.
+- `RAM`: A nullable property of type `RAMResult` that contains RAM utilization information.
+- `Disk`: A nullable property of type `RWData` that contains Disk read and write information.
+- `Networking`: A nullable property of type `RWData` that contains Networking read and write information.
+
+#### Methods:
+
+- `ToJson()`: Converts the `ResourceResult` structure to a `JObject` for easy serialization to JSON.
+- `ToString()`: Converts the `ResourceResult` structure to a JSON-formatted string.
+
+### 2. `CPUResult` Class
+
+The `CPUResult` class represents CPU utilization information. It includes the following properties:
+
+- `System`: The percentage of CPU utilization by the system.
+- `Application`: The percentage of CPU utilization by the application.
+- `Min`: The minimum CPU utilization.
+- `Max`: The maximum CPU utilization.
+
+### 3. `RAMResult` Class
+
+The `RAMResult` class represents RAM utilization information. It includes the following properties:
+
+- `System`: The amount of RAM used by the system.
+- `Application`: The amount of RAM used by the application.
+- `Min`: The minimum RAM usage.
+- `Max`: The maximum RAM usage.
+
+### 4. `RWData` Structure
+
+The `RWData` structure represents read and write data for Disk and Networking. It includes the following properties:
+
+- `Read`: The amount of data read.
+- `Write`: The amount of data written.
+
+
 ### Example
 
 Here's a complete example that demonstrates the usage of the SysMonitor.NET library:
 
 ```csharp
-// Include necessary namespaces
+// Import necessary namespaces
 using Chase.CommonLib.Math;
 using SysMonitor.NET;
+using SysMonitor.NET.Resources;
 
 namespace Example
 {
@@ -111,28 +156,45 @@ namespace Example
             // Subscribe to the OnUpdate event
             monitor.OnUpdate += (sender, data) =>
             {
-                // Update UI or log resource data
+                // Access resource data using the data options
                 Console.Clear();
 
-                if (data.CPU != null)
-                {
-                    // Print CPU information
-                }
+            if (data.CPU != null)
+            {
+                CPUResult cpuInfo = data.CPU;
+                Console.WriteLine($"CPU: \n" +
+                                  $"\tSystem - {cpuInfo.System:P2}\n" +
+                                  $"\tApplication - {cpuInfo.Application:P2}");
+            }
 
-                if (data.RAM != null)
-                {
-                    // Print RAM information
-                }
+            if (data.RAM != null)
+            {
+                RAMResult ramInfo = data.RAM;
+                double systemRamUsage = ramInfo.System / (double)(ramInfo.Max);
+                double appRamUsage = ramInfo.Application / (double)(ramInfo.Max);
 
-                if (data.Disk != null)
-                {
-                    // Print Disk information
-                }
+                Console.WriteLine($"RAM: \n" +
+                                  $"\tSystem - {AdvancedFileInfo.SizeToString((long)(ramInfo.System))} / " +
+                                  $"{AdvancedFileInfo.SizeToString((long)(ramInfo.Max))} ({systemRamUsage:P2})\n" +
+                                  $"\tApplication - {AdvancedFileInfo.SizeToString((long)(ramInfo.Application))} / " +
+                                  $"{AdvancedFileInfo.SizeToString((long)(ramInfo.Max))} ({appRamUsage:P2})");
+            }
 
-                if (data.Networking != null)
-                {
-                    // Print Networking information
-                }
+            if (data.Disk != null)
+            {
+                RWData? diskInfo = data.Disk;
+                Console.WriteLine($"Disk: \n" +
+                                  $"\tSystem - r:{AdvancedFileInfo.SizeToString((long)(diskInfo?.Read ?? 0))}/s " +
+                                  $"w:{AdvancedFileInfo.SizeToString((long)(diskInfo?.Write ?? 0))}/s");
+            }
+
+            if (data.Networking != null)
+            {
+                RWData? networkInfo = data.Networking;
+                Console.WriteLine($"Networking: \n" +
+                                  $"\tSystem - r:{AdvancedFileInfo.SizeToString((long)(networkInfo?.Read ?? 0))}/s " +
+                                  $"w:{AdvancedFileInfo.SizeToString((long)(networkInfo?.Write ?? 0))}/s");
+            }
             };
 
             // Start monitoring
@@ -146,8 +208,5 @@ namespace Example
         }
     }
 }
+
 ```
-
-## Conclusion
-
-With SysMonitor.NET, you can easily integrate system resource monitoring into your C# applications, providing valuable insights into the performance of the underlying hardware. Customize the example code to suit your specific use case and enhance the monitoring capabilities of your applications.
