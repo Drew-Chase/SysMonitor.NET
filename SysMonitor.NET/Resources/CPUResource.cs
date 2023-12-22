@@ -8,9 +8,9 @@ public class CPUResource : ResourceItemBase<double>
     {
         Result = new CPUResult() { Max = MaxValue, Min = MinValue };
     }
+
     public override double GetApplicationUsage()
     {
-
         long startTime = Environment.TickCount64;
 
         TimeSpan startUsage = Process.GetCurrentProcess().TotalProcessorTime;
@@ -20,7 +20,6 @@ public class CPUResource : ResourceItemBase<double>
         }
 
         TimeSpan currentUsage = Process.GetCurrentProcess().TotalProcessorTime;
-
 
         double elapsedMilliseconds = Environment.TickCount64 - startTime;
 
@@ -71,5 +70,4 @@ public class CPUResource : ResourceItemBase<double>
         ((CPUResult)Result).System = value;
         return value;
     }
-
 }
