@@ -44,7 +44,6 @@ public class DiskResource : ResourceItemBase<RWData>
             ProcessStartInfo processInfo = new("bash", $"-c \"{command}\"")
             {
                 RedirectStandardOutput = true,
-                RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
