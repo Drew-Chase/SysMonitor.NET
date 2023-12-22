@@ -30,7 +30,6 @@ Make sure you have the following prerequisites before using SysMonitor.NET:
 1. Import the required namespaces in your C# code:
 
    ```csharp
-   using Chase.CommonLib.Math;
    using SysMonitor.NET;
    ```
 
@@ -38,6 +37,10 @@ Make sure you have the following prerequisites before using SysMonitor.NET:
 
    ```csharp
    ResourceMonitor monitor = ResourceMonitor.Default;
+   // or
+   TimeSpan updateFrequency = TimeSpan.FromSeconds(1);
+   EResourceType monitorFlags = EResourceType.CPU | EResourceType.RAM | EResourceType.DISK | EResourceType.NETWORK;
+   ResourceMonitor monitor = new ResourceMonitor(updateFrequency, monitorFlags);
    ```
 
 3. Subscribe to the `OnUpdate` event to receive real-time resource data:
@@ -52,8 +55,6 @@ Make sure you have the following prerequisites before using SysMonitor.NET:
 4. Inside the event handler, update your application UI or log the resource data as needed. The provided example clears the console and prints CPU, RAM, Disk, and Networking information.
 
    ```csharp
-   Console.Clear();
-
    if (data.CPU != null)
    {
        // Print CPU information
