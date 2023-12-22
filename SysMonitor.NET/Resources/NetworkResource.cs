@@ -45,11 +45,10 @@ public class NetworkResource : ResourceItemBase<RWData>
         }
         else if (OperatingSystem.IsLinux())
         {
-            string command = "ip -s -link -j";
+            string command = "ip -j -s link";
             ProcessStartInfo processInfo = new("bash", $"-c \"{command}\"")
             {
                 RedirectStandardOutput = true,
-                RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -65,13 +64,15 @@ public class NetworkResource : ResourceItemBase<RWData>
             };
             process.Start();
             process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
             process.WaitForExit();
 
             if (process.ExitCode != 0 || string.IsNullOrWhiteSpace(content))
             {
                 return (RWData)(Result = data);
             }
+
+            ulong r = 0;
+            ulong s = 0;
 
             foreach (JObject json in JArray.Parse(content).Cast<JObject>())
             {
@@ -82,13 +83,12 @@ public class NetworkResource : ResourceItemBase<RWData>
                         continue;
                     }
                 }
-
-                if (json["stats"] is JObject stats)
-                {
-                    data.Read += stats["rx"]?["bytes"]?.ToObject<ulong>() ?? 0;
-                    data.Write += stats["tx"]?["bytes"]?.ToObject<ulong>() ?? 0;
-                }
+                r += json["stats64"]?["rx"]?["bytes"]?.ToObject<ulong>() ?? 0;
+                s += json["stats64"]?["tx"]?["bytes"]?.ToObject<ulong>() ?? 0;
+                r += json["stats"]?["rx"]?["bytes"]?.ToObject<ulong>() ?? 0;
+                s += json["stats"]?["tx"]?["bytes"]?.ToObject<ulong>() ?? 0;
             }
+            data = new(r, s);
         }
         return (RWData)(Result = data);
     }
