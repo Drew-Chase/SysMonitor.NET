@@ -136,7 +136,7 @@ The `RWData` structure represents read and write data for Disk and Networking. I
 
 ### Example
 
-Here's a complete example that demonstrates the usage of the SysMonitor.NET library:
+Here's a complete example that demonstrates the usage of the SysMonitor.NET library, you can also view the full example project [here](/Example/Program.cs):
 
 ```csharp
 // Import necessary namespaces
