@@ -5,8 +5,15 @@ namespace SysMonitor.NET.Resources;
 
 public class DiskResource : ResourceItemBase<RWData>
 {
+    PerformanceCounter readCounter;
+    PerformanceCounter writeCounter;
     public DiskResource() : base("Disk", new(ulong.MaxValue, ulong.MaxValue), new(0, 0))
     {
+        if (OperatingSystem.IsWindows())
+        {
+            readCounter = new("PhysicalDisk", "Disk Read Bytes/sec", "_Total");
+            writeCounter = new("PhysicalDisk", "Disk Write Bytes/sec", "_Total");
+        }
     }
 
     public override RWData GetApplicationUsage()
@@ -21,9 +28,7 @@ public class DiskResource : ResourceItemBase<RWData>
 
         if (OperatingSystem.IsWindows())
         {
-            PerformanceCounter readCounter = new("PhysicalDisk", "Disk Read Bytes/sec", "_Total");
-            PerformanceCounter writeCounter = new("PhysicalDisk", "Disk Write Bytes/sec", "_Total");
-            return new((ulong)(readCounter?.NextValue() ?? 0f), (ulong)(writeCounter?.NextValue() ?? 0L));
+            data = new((ulong)readCounter.NextValue(), (ulong)writeCounter.NextValue());
         }
         else if (OperatingSystem.IsLinux())
         {
@@ -39,12 +44,11 @@ public class DiskResource : ResourceItemBase<RWData>
             ProcessStartInfo processInfo = new("bash", $"-c \"{command}\"")
             {
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
             Process process = new() { StartInfo = processInfo };
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
             string content = "";
             process.OutputDataReceived += (sender, data) =>
             {
@@ -54,6 +58,8 @@ public class DiskResource : ResourceItemBase<RWData>
                 }
             };
             process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
             process.WaitForExit();
             JObject json = JObject.Parse(content);
             long reads = 0;
